@@ -1,0 +1,94 @@
+<style>
+    .clicked{
+        transform: scale(2.5);
+        color:red;
+    }
+    .key{
+        position: absolute;
+        transition: all .5s;
+        font-size: 35px;
+        color:black;
+    }
+    p{
+        text-align: center;
+        font-size: 30px;
+        color:blue;
+    }
+    body{
+        height: 100%;
+        
+    }
+</style>
+
+<html>
+<body>
+    <p id = "score">Score: 0</p>
+    <p id="typos">Typos: 0</p>
+</body>
+<script> 
+
+window.addEventListener('keydown', clicked);
+let score=0;
+let maxspeed=200;
+let maxkeys=100;
+let typos=0;
+start();
+
+function start()
+{
+    const temp=document.querySelectorAll("div");
+    if(temp.length<maxkeys)
+        newDiv();
+
+    let currentspeed=600-(score*9);
+    setTimeout(start,Math.max(maxspeed, currentspeed));
+    console.log("working, speed: " + Math.max(maxspeed, currentspeed) + " keys: "+temp.length);
+}
+
+
+function randkey()
+{
+    return parseInt((Math.random()*26)+65);
+}
+
+
+function newDiv(){
+    const newDiv = document.createElement("div");
+    var documentHeight = document.documentElement.clientHeight;
+    var documentWidth = document.documentElement.clientWidth;
+    var currentTop = Math.floor(Math.random() * documentHeight) + 1;
+    var currentLeft = Math.floor(Math.random() * documentWidth) + 1;
+    newDiv.classList.add("key");
+    newDiv.style.top=currentTop+"px";
+    newDiv.style.left=currentLeft+"px";
+
+    let temp=randkey();
+    const newContent = document.createTextNode(String.fromCharCode(temp));
+    newDiv.dataset.key=""+temp;
+
+    newDiv.appendChild(newContent);
+    newDiv.addEventListener('transitionend', event => {
+        score++;
+        newDiv.remove(); 
+    });
+    
+    const currentDiv = document.getElementById("div");
+    document.body.insertBefore(newDiv, currentDiv);
+}
+
+function clicked(e)
+{
+    document.getElementById("score").innerHTML = "Score: "+score;
+    const key = document.querySelectorAll(`div[data-key="${e.keyCode}"]`);
+    for(let x=0; x<key.length; x++)
+        key[x].classList.add('clicked');
+
+    if(key.length==0)
+    {
+        typos++;
+        document.getElementById("typos").innerHTML = "Typos: "+typos;
+    }
+}
+
+ </script>
+</html>
